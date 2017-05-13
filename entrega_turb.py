@@ -73,12 +73,59 @@ def relacion_compresor_normal(G0):
         return 0
     return rel_c
 
+def generador_gas(P0, T0, G0):
+    # Compresor:
+    P3t = P0 * relacion_compresor_normal(G0)
+    T3t = T0 * (1 + 1 / rend_comb * (-1 + pi_comb ** ((air.gamma_air(T2t) - 1) / air.gamma_air(T2t))))
+
+    # Cámara de combustión
+    T4t = f * L * rend_comb / (1 + f) / air.cp_air(T3t) + T3t / (1 + f)
+    c = f * G0
+    Tcomp = 0.5 * (T3t + T2t)
+    P4t = pi_comb * P3t
+
+    # Turbina
+    T5t = T4t - air.cp_air(Tcomp) / air.cp_air((T3t + T4t) / 2) * (T3t - T2t)
+    Tturb = 0.5 * (T5t + T4t)
+    W45 = G0 * air.cp_air(Tturb) * (T5t - T4t)
+    W23 = G0 * air.cp_air(Tcomp) * (T3t - T2t)
+    P5t = ((T5t / T4t - 1) / rend_turb(T4t) + 1) ** (air.gamma_air(Tturb) / (air.gamma_air(Tturb) - 1)) * P4t
+
+
+def turborreactor(m, T0, G0, p0):
+    # Difusor:
+    T2t = gas.stagnation_temperature_from_mach(m, T0)
+    P2t = gas.stagnation_pressure_from_mach(m, p0, T0)
+
+    # Compresor:
+    P3t = P2t * relacion_compresor_normal(G0)
+    T3t = T2t * (1 + 1 / rend_comb * (-1 + pi_comb ** ((air.gamma_air(T2t) - 1) / air.gamma_air(T2t))))
+
+    # Cámara de combustión
+    T4t = f * L * rend_comb / (1 + f) / air.cp_air(T3t) + T3t / (1 + f)
+    c = f * G0
+    Tcomp = 0.5 * (T3t + T2t)
+    P4t = pi_comb * P3t
+
+    # Turbina
+    T5t = T4t - air.cp_air(Tcomp) / air.cp_air((T3t + T4t) / 2) * (T3t - T2t)
+    Tturb = 0.5 * (T5t + T4t)
+    W45 = G0 * air.cp_air(Tturb) * (T5t - T4t)
+    W23 = G0 * air.cp_air(Tcomp) * (T3t - T2t)
+    P5t = ((T5t / T4t - 1) / rend_turb(T4t) + 1) ** (air.gamma_air(Tturb) / (air.gamma_air(Tturb) - 1)) * P4t
+
+    # Tobera
+    P9 = isa.pres_isa(h)
+    T9 = T5t * (
+    rend_tobera(h) * ((P9 / P5t) ** (air.gamma_air((T5t + T2t) / 2) - 1) / air.gamma_air((T5t + T2t) / 2) - 1) + 1)
+
 
 height = np.array([500, 2000, 4000, 5000, 7000, 9000, 11000])
 mach = np.array([0.3, .45, .6, .8, .85, .9, .95])
 
 T0 = np.zeros(height.size * mach.size)
 p0 = np.zeros_like(T0)
+
 
 area = np.pi * 0.4**2
 ii = 0
@@ -91,29 +138,6 @@ for h in height:
         v0 = m * gas.sound_speed(T0[ii])
         G0 = rho0 * area * v0
 
-        # Difusor:
-        T2t = gas.stagnation_temperature_from_mach(m, T0[ii])
-        P2t = gas.stagnation_pressure_from_mach(m, p0[ii], T0[ii])
-
-        #Compresor:
-        P3t = P2t * relacion_compresor_normal(G0)
-        T3t = T2t * (1 + 1 / rend_comb * (-1 + pi_comb ** ((air.gamma_air(T2t) - 1) / air.gamma_air(T2t))))
-
-        # Cámara de combustión
-        T4t = f * L * rend_comb / (1 + f) / air.cp_air(T3t) + T3t / (1 + f)
-        c = f * G0
-        Tcomp = 0.5 * (T3t + T2t)
-        P4t = pi_comb * P3t
-
-        #Turbina
-        T5t = T4t - air.cp_air(Tcomp) / air.cp_air((T3t + T4t) / 2) * (T3t - T2t)
-        Tturb = 0.5 * (T5t + T4t)
-        W45 = G0 * air.cp_air(Tturb) * (T5t - T4t)
-        W23 = G0 * air.cp_air(Tcomp) * (T3t - T2t)
-        P5t = ((T5t / T4t - 1) / rend_turb(T4t) + 1) ** (air.gamma_air(Tturb) / (air.gamma_air(Tturb) - 1)) * P4t
-
-        #Tobera
-        P9 = isa.pres_isa(h)
-        T9 = T5t * (rend_tobera(h) * ((P9 / P5t) ** (air.gamma_air((T5t + T2t) / 2) - 1) / air.gamma_air((T5t + T2t) / 2) - 1) + 1)
-
+        turborreactor(m, G0,T0[ii], p0[ii])
+        
         ii += 1
