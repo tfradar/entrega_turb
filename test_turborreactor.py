@@ -40,8 +40,7 @@ for h in height:
         G0[ii] = rho0 * area * v0[ii]
 
         # Difusor:
-        T2t = gas.stagnation_temperature_from_mach(m, T0[ii])
-        p2t = gas.stagnation_pressure_from_mach(m, p0[ii], T0[ii])
+        T2t, p2t = turborreactor.difusor(m, p0[ii], T0[ii])
 
         # Generador de Gas:
         T5t, p5t, _, _, c = generador_gas.generador_gas(T2t, p2t, G0[ii])
@@ -54,6 +53,7 @@ for h in height:
         E = turborreactor.empuje(G0[ii], c, v9, v0[ii])
         # Impulso, consumo especifico, rendimientos...
         # ...
+
         print(ii, E)
         ii += 1
 
