@@ -1,5 +1,7 @@
 """
-Explicación de qué hace este .py aquí.
+# Se definen las partes del turborreactor
+# Difusor, Tobera con su rendimiento
+# Actuaciones del motor y rendimientos
 """
 
 from air_model import RealGas
@@ -22,7 +24,6 @@ def difusor(mach, p0, T0):
 def rend_tobera(x):
 
     return - 1/3 * ((x - 8000) / 11000) ** 2 + 1
-
 
 # Calculo de la tobera
 def tobera(h, p5t, T5t, T2t):
