@@ -43,17 +43,19 @@ for h in height:
         T2t, p2t = turborreactor.difusor(m, p0[ii], T0[ii])
 
         # Generador de Gas:
-        T5t, p5t, _, _, c = generador_gas.generador_gas(T2t, p2t, G0[ii])
+        T5t, p5t, c, = generador_gas.generador_gas(T2t, p2t, G0[ii])
 
         # Tobera:
         T9, p9 = turborreactor.tobera(h, p5t, T5t, T2t)
         v9 = gas.velocity_from_stagnation_temperature(T5t, T9)
 
         # Actuaciones:
-        E = turborreactor.empuje(G0[ii], c, v9, v0[ii])
-        # Impulso, consumo especifico, rendimientos...
-        # ...
+        #Empuje, Impulso específico, Consumo específico
+        E, Ie, Ce, Eneto = turborreactor.actuaciones(G0[ii], c, v9, v0[ii])
 
-        print(ii, E)
+        eta_m, eta_p, eta_mp = turborreactor.rendimiento_TB(Eneto, G0, c, v9, v0,)
+
+        # Cuando imprimo los rendimientos me sale un array, no se por que
+        print(ii + 1, T9)
         ii += 1
 
