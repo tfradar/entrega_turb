@@ -89,4 +89,4 @@ def generador_gas(T2t, p2t, G0):
     W23 = G0 * air.cp_air(Tcomp) * (T3t - T2t)
     p5t = ((T5t / T4t - 1) / rend_turb(T4t) + 1) ** (air.gamma_air(Tturb) /
                                                      (air.gamma_air(Tturb) - 1)) * p4t
-    return T5t, p5t, c,
+    return T5t, p5t, c, p4t
