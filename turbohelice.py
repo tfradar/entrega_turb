@@ -19,6 +19,14 @@ def rend_turb(x):
     else:
         return ((x - 1000) * 0.1 / 1000) + 0.88
 
+# Cálculo del difusor
+def difusor(mach, p0, T0):
+    # Difusor:
+    T2t = gas.stagnation_temperature_from_mach(mach, T0)
+    p2t = gas.stagnation_pressure_from_mach(mach, p0, T0)
+    return T2t, p2t
+
+
 # Función turbina
 def turbina(T5t, G0, p5t, p0, T2t):
     # Turbina
