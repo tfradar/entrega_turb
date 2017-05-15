@@ -36,7 +36,7 @@ for h in height:
         # Condiciones ambiente:
         T0[ii] = isa.temp_isa(h)
         p0[ii] = isa.pres_isa(h)
-        rho0 = p0[ii] / (T0[ii] * air.R_air)
+        rho0 = p0[ii] / (T0[ii] * air.R_air)t
         v0[ii] = m * gas.sound_speed(T0[ii])
         G0[ii] = rho0 * area * v0[ii]
 
@@ -44,12 +44,16 @@ for h in height:
         T2t, p2t = turbohelice.difusor(m, p0[ii], T0[ii])
 
         # Generador de Gas:
-        T5t, p5t, c, = generador_gas.generador_gas(T2t, p2t, G0[ii])
+        T45t, p45t, c, = generador_gas.generador_gas(T2t, p2t, G0[ii])
 
         # Turbina turbohélice
-        T5_t = turbohelice.turbina(T5t, G0, p5t, p0[ii], T2t)
+        # MRJ: te devuelve todo esto: T5_t, p45t, W56, p5_t, T5_, v6
+        #      estabas recogiendo solo 1 variable con lo que se guardaba un array con las 6 variables
+        #      Además estabas metiendo p0 en lugar de p0[ii]
+        T5_t, _ , _, _, _, _ = turbohelice.turbina(T45t, G0[ii], p45t, p0[ii], T2t)
 
-        print(ii + 1, T5_t)
+        print(ii + 1, T45t, p45t, T2t, T5_t)
+
 
         #Aquí me vuelve a dar un resultado de una array
         ii += 1
