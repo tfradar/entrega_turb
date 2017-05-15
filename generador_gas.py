@@ -1,6 +1,12 @@
+"""
+# Archivo de defición de un generador de gas
+# Se define comrpesor, cámara de combustión y turbina 
+"""
+
 from air_model import RealGas
 from isentropic_gas import IsentropicGas
 
+# Carga de funciones:
 air = RealGas(cp_option='naca', gamma_option='standard')
 gas = IsentropicGas(selected_cp_air_model='naca', selected_gamma_air_model='standard')
 
