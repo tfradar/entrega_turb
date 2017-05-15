@@ -26,7 +26,13 @@ v0 = np.zeros_like(T0)
 G0 = np.zeros_like(T0)
 
 E = np.zeros_like(T0)
-# ...
+Eneto = np.zeros_like(T0)
+Ie = np.zeros_like(T0)
+Ce = np.zeros_like(T0)
+eta_m = np.zeros_like(T0)
+eta_p = np.zeros_like(T0)
+eta_mp = np.zeros_like(T0)
+
 
 area = np.pi * 0.4 ** 2
 
@@ -44,7 +50,7 @@ for h in height:
         T2t, p2t = turbohelice.difusor(m, p0[ii], T0[ii])
 
         # Generador de Gas:
-        T45t, p45t, c, = generador_gas.generador_gas(T2t, p2t, G0[ii])
+        T45t, p45t, c, p4t = generador_gas.generador_gas(T2t, p2t, G0[ii])
 
         # Turbina turbohélice
         T5_, T5_t, p5_t, W56, v8 = turbohelice.turbina(T45t, G0[ii], p45t, p0[ii], T2t)
@@ -55,7 +61,7 @@ for h in height:
         # Rendimiento
         eta_m, eta_p, eta_mp = turbohelice.rendimiento_TB(Eneto, c, v8, v0[ii], G0[ii])
 
-        print(ii + 1, eta_mp)
+        print(ii + 1, E)
 
         ii += 1
 
