@@ -1,11 +1,14 @@
 """
-Explicación de qué hace este .py aquí.
+Archivo con las partes del turbohélice
+
+Difusor, 
 """
 
 from air_model import RealGas
 from isentropic_gas import IsentropicGas
 import isa
 import numpy as np
+import generador_gas
 
 air = RealGas(cp_option='naca', gamma_option='standard')
 gas = IsentropicGas(selected_cp_air_model='naca', selected_gamma_air_model='standard')
@@ -26,23 +29,6 @@ def difusor(mach, p0, T0):
     p2t = gas.stagnation_pressure_from_mach(mach, p0, T0)
     return T2t, p2t
 
-
-# Función turbina
-def turbina(T5t, G0, p5t, p0, T2t):
-    # Turbina
-    p45t = p5t
-    T45t = T5t
-    T5_t = (T2t + T45t) / 2
-    Tturb = 0.5 * (T5_t + T45t)
-    W56 = G0 * air.cp_air(Tturb) * (T5_t - T45t)
-    p5_t = ((T5_t / T5t - 1) / rend_turb(T5t) + 1) ** (air.gamma_air(Tturb) /
-                                                     (air.gamma_air(Tturb) - 1)) * p45t
-    p6_ = p0
-    T5_ = (p6_ / p45t) ** ((air.gamma_air(Tturb) - 1) / air.gamma_air(Tturb)) * T5_t
-    v6 = (np.sqrt(2 * air.cp_air(Tturb) * (T5t - T5_)))
-
-    return T5_t, p45t, W56, p5_t, T5_, v6
-
 # Función rendimiento de la hélice
 def rendimiento_helice(mach_i, alt_i):
     altitud = []
@@ -62,10 +48,50 @@ def rendimiento_helice(mach_i, alt_i):
 # Función Hélice
 def helice(v0, G0, v6, W56, m, h):
     Eneto = G0 * (v6 - v0)
-    Potencia_TJ = Eneto * v0
-    Phelice = Potencia_TJ
-    rend_mec = Phelice / W56
+    Phelice = Eneto * v0
+    rend_mec = 0,95
     rend_helice = rendimiento_helice(m, h)
     Wprop = Phelice/ rend_helice /rend_mec
 
     return Wprop
+
+# Función turbina
+def turbina(T5t, G0, p5t, p0, Wprop):
+    # Turbina
+    p45t = p5t
+    T45t = T5t
+    T5_t = T45t - Wprop / G0 / air.cp_air(T5t)
+    Tturb = 0.5 * (T5_t + T45t)
+    W56 = G0 * air.cp_air(Tturb) * (T5_t - T45t)
+    p5_t = ((T5_t / T5t - 1) / rend_turb(T5t) + 1) ** (air.gamma_air(Tturb) /
+                                                     (air.gamma_air(Tturb) - 1)) * p45t
+    p6_ = p0
+    T5_ = (p6_ / p45t) ** ((air.gamma_air(Tturb) - 1) / air.gamma_air(Tturb)) * T5_t
+    v8 = (np.sqrt(2 * air.cp_air(Tturb) * (T5t - T5_)))
+
+    return T5_, T5_t, p5_t, W56, v8
+
+def actuaciones(G0, c, v8, v0):
+    #Empuje
+    E = (G0 + c) * v8 - G0 * v0
+    #Empuje neto
+    Eneto = G0 * (v8 - v0)
+    # Impulso específico total (sin aproximar la presión de salida)
+    Ie = E / G0
+    # Consumo específico total (sin aproximar la presión de salida)
+    Ce = c / E
+
+    return E, Eneto, Ie, Ce,
+
+# Rendimiento motor, propulsor y motopropulsor:
+def rendimiento_TB(Eneto, c, v8, v0, G0):
+    # Rendimiento motor:
+    eta_m = (Eneto * v0 + 0.5 * (G0 + c) * (v8 - v0) ** 2 - 0.5 * c * v0 ** 2) / (c * generador_gas.heating_value)
+
+    # Rendimiento propulsor:
+    eta_p = Eneto * v0 / (Eneto * v0 + 0.5 * (G0 + c) * (v8 - v0) ** 2 - 0.5 * c * v0 ** 2)
+
+    # Rendimiento motopropulsor:
+    eta_mp = eta_m * eta_p
+
+    return eta_m, eta_p, eta_mp
