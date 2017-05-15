@@ -71,14 +71,15 @@ def relacion_compresor_normal(G0):
 
 
 # Función generador de gas
-def generador_gas(T2t, P2t, G0):
+def generador_gas(T2t, p2t, G0):
     # Compresor:
-    P3t = P2t * relacion_compresor_normal(G0)
+    p3t = p2t * relacion_compresor_normal(G0)
     T3t = T2t * (1 + 1 / rend_comb * (-1 + pi_comb ** ((air.gamma_air(T2t) - 1) / air.gamma_air(T2t))))
+
     # Cámara de combustión
     T4t = f * heating_value * rend_comb / (1 + f) / air.cp_air(T3t) + T3t / (1 + f)
     Tcomp = 0.5 * (T3t + T2t)
-    P4t = pi_comb * P3t
+    p4t = pi_comb * p3t
     c = f * G0
 
     # Turbina
@@ -86,6 +87,6 @@ def generador_gas(T2t, P2t, G0):
     Tturb = 0.5 * (T5t + T4t)
     W45 = G0 * air.cp_air(Tturb) * (T5t - T4t)
     W23 = G0 * air.cp_air(Tcomp) * (T3t - T2t)
-    P5t = ((T5t / T4t - 1) / rend_turb(T4t) + 1) ** (air.gamma_air(Tturb) /
-                                                     (air.gamma_air(Tturb) - 1)) * P4t
-    return T5t, P5t, W45, W23, c
+    p5t = ((T5t / T4t - 1) / rend_turb(T4t) + 1) ** (air.gamma_air(Tturb) /
+                                                     (air.gamma_air(Tturb) - 1)) * p4t
+    return T5t, p5t, c,
