@@ -41,7 +41,7 @@ for h in height:
         G0[ii] = rho0 * area * v0[ii]
 
         # Difusor:
-        T2t, p2t = turborreactor.difusor(m, p0[ii], T0[ii])
+        T2t, p2t = turbohelice.difusor(m, p0[ii], T0[ii])
 
         # Generador de Gas:
         T5t, p5t, c, = generador_gas.generador_gas(T2t, p2t, G0[ii])
