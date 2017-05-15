@@ -36,7 +36,7 @@ for h in height:
         # Condiciones ambiente:
         T0[ii] = isa.temp_isa(h)
         p0[ii] = isa.pres_isa(h)
-        rho0 = p0[ii] / (T0[ii] * air.R_air)t
+        rho0 = p0[ii] / (T0[ii] * air.R_air)
         v0[ii] = m * gas.sound_speed(T0[ii])
         G0[ii] = rho0 * area * v0[ii]
 
