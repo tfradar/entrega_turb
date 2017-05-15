@@ -47,15 +47,16 @@ for h in height:
         T45t, p45t, c, = generador_gas.generador_gas(T2t, p2t, G0[ii])
 
         # Turbina turbohélice
-        # MRJ: te devuelve todo esto: T5_t, p45t, W56, p5_t, T5_, v6
-        #      estabas recogiendo solo 1 variable con lo que se guardaba un array con las 6 variables
-        #      Además estabas metiendo p0 en lugar de p0[ii]
-        T5_t, _ , _, _, _, _ = turbohelice.turbina(T45t, G0[ii], p45t, p0[ii], T2t)
+        T5_, T5_t, p5_t, W56, v8 = turbohelice.turbina(T45t, G0[ii], p45t, p0[ii], T2t)
 
-        print(ii + 1, T45t, p45t, T2t, T5_t)
+        # Actuaciones:
+        # Empuje, Impulso específico, Consumo específico
+        E, Ie, Ce, Eneto = turbohelice.actuaciones(G0[ii], c, v8, v0[ii])
+        # Rendimiento
+        eta_m, eta_p, eta_mp = turbohelice.rendimiento_TB(Eneto, c, v8, v0[ii], G0[ii])
 
+        print(ii + 1, eta_mp)
 
-        #Aquí me vuelve a dar un resultado de una array
         ii += 1
 
 
