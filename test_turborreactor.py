@@ -54,12 +54,12 @@ for h in height:
         v9 = gas.velocity_from_stagnation_temperature(T5t, T9)
 
         # Actuaciones:
-        #Empuje, Impulso específico, Consumo específico
+        # Empuje, Impulso específico, Consumo específico
         E, Ie, Ce, Eneto = turborreactor.actuaciones(G0[ii], c, v9, v0[ii])
+        # Rendimiento
+        eta_m, eta_p, eta_mp = turborreactor.rendimiento_TB(Eneto, c, v9, v0[ii], G0[ii])
 
-        eta_m, eta_p, eta_mp = turborreactor.rendimiento_TB(Eneto, G0, c, v9, v0,)
-
-        # Cuando imprimo los rendimientos me sale un array, no se por que
         print(ii + 1, eta_mp)
         ii += 1
+
 
