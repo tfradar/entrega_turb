@@ -47,12 +47,12 @@ def actuaciones(G0, c, v9, v0):
     return E, Ie, Ce, Eneto,
 
 # Rendimiento motor, propulsor y motopropulsor:
-def rendimiento_TB(Eneto, G, c, v9, v0, ):
+def rendimiento_TB(Eneto, c, v9, v0, G0):
     # Rendimiento motor:
-    eta_m = (Eneto * v0 + 0.5 * (G + c) * (v9 - v0) ** 2 - 0.5 * c * v0 ** 2) / (c * generador_gas.heating_value)
+    eta_m = (Eneto * v0 + 0.5 * (G0 + c) * (v9 - v0) ** 2 - 0.5 * c * v0 ** 2) / (c * generador_gas.heating_value)
 
     # Rendimiento propulsor:
-    eta_p = Eneto * v0 / (Eneto * v0 + 0.5 * (G + c) * (v9 - v0) ** 2 - 0.5 * c * v0 ** 2)
+    eta_p = Eneto * v0 / (Eneto * v0 + 0.5 * (G0 + c) * (v9 - v0) ** 2 - 0.5 * c * v0 ** 2)
 
     # Rendimiento motopropulsor:
     eta_mp = eta_m * eta_p
