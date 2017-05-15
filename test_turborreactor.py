@@ -25,6 +25,10 @@ v0 = np.zeros_like(T0)
 G0 = np.zeros_like(T0)
 
 E = np.zeros_like(T0)
+Eneto = np.zeros_like(T0)
+eta_m = np.zeros_like(T0)
+eta_p = np.zeros_like(T0)
+eta_mp = np.zeros_like(T0)
 # ...
 
 area = np.pi * 0.4 ** 2
@@ -56,6 +60,6 @@ for h in height:
         eta_m, eta_p, eta_mp = turborreactor.rendimiento_TB(Eneto, G0, c, v9, v0,)
 
         # Cuando imprimo los rendimientos me sale un array, no se por que
-        print(ii + 1, T9)
+        print(ii + 1, eta_mp)
         ii += 1
 
