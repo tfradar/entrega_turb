@@ -51,7 +51,7 @@ for h in height:
 
         print(ii + 1, T5_t)
 
-
+        #Aquí me vuelve a dar un resultado de una array
         ii += 1
 
 
