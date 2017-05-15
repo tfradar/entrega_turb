@@ -1,7 +1,6 @@
 """
-Archivo con las partes del turbohélice
-
-Difusor, 
+# Archivo con las partes del turbohélice
+# Difusor, Hélice con su rendimiento, Turbina, actuaciones y rendimientos
 """
 
 from air_model import RealGas
@@ -10,6 +9,7 @@ import isa
 import numpy as np
 import generador_gas
 
+# Carga de funciones:
 air = RealGas(cp_option='naca', gamma_option='standard')
 gas = IsentropicGas(selected_cp_air_model='naca', selected_gamma_air_model='standard')
 
@@ -71,6 +71,7 @@ def turbina(T5t, G0, p5t, p0, Wprop):
 
     return T5_, T5_t, p5_t, W56, v8
 
+# Función de las actuaciones del motor
 def actuaciones(G0, c, v8, v0):
     #Empuje
     E = (G0 + c) * v8 - G0 * v0
