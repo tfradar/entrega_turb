@@ -51,7 +51,7 @@ def tubofan(G0, v0, rho0, T0, P0, T2t, T5t, p2t, p4t):
     Afan = G0 / (rho0 * v0)
     dfan = np.sqrt(Afan/np.pi*4)
     T45t = T5t
-    T5_t = (T2t + T45t)*0.5
+    T5_t = (T2t + T45t) * 0.5
     Tturb2 = 0.5*(T45t + T5t)
     p5_t = p4t * (1 + 1 / rend_turb(Tturb2) * (T5_t / T45t - 1)) ** (air.gamma_air(Tturb2) / (air.gamma_air(Tturb2) - 1))
     T13t = 1/5 * air.cp_air(Tturb2) * (T45t - T5_t) /air.cp_air(T2t) + T2t
