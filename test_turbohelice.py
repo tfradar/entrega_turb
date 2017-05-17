@@ -30,9 +30,7 @@ v0 = np.zeros_like(T0)
 G0 = np.zeros_like(T0)
 
 # Creación de las listas resultado
-E_lista = []
-Eneto_lista = []
-Ie_lista = []
+Tp_lista = []
 Ce_lista = []
 eta_m_lista = []
 eta_p_lista = []
@@ -55,23 +53,24 @@ for h in height:
         T45t, p45t, c, p4t = generador_gas.generador_gas(T2t, p2t, G0[ii])
 
         # Turbina turbohélice
-        T5_, T5_t, p5_t, W56, v8 = turbohelice.turbina(T45t, G0[ii], p45t, p0[ii], T2t)
+        T5_t, p5_t, W56 = turbohelice.turbina(T45t, G0[ii], p45t, p0[ii], T2t)
+
+        # Hélice
+        Phelice, T5t, Pot_H_u = turbohelice.helice(T0[ii], v0[ii], G0[ii], m, h, c, T45t)
 
         # Actuaciones:
         # Empuje, Impulso específico, Consumo específico
-        E, Ie, Ce, Eneto = turbohelice.actuaciones(G0[ii], c, v8, v0[ii])
+        Tp, Ce = turbohelice.actuaciones(c, v0[ii], Phelice)
         # Rendimiento
-        eta_m, eta_p, eta_mp = turbohelice.rendimiento_TB(Eneto, c, v8, v0[ii], G0[ii])
+        eta_m, eta_p, eta_mp = turbohelice.rendimiento_TB(c, Pot_H_u, Tp)
 
         # Reunimos los resultados en listas
-        E_lista.append(E)
-        Eneto_lista.append(Eneto)
-        Ie_lista.append(Ie)
+        Tp_lista.append(Tp)
         Ce_lista.append(Ce)
         eta_m_lista.append(eta_m)
         eta_p_lista.append(eta_p)
         eta_mp_lista.append(eta_mp)
 
         ii += 1
-
+print(eta_mp_lista)
 #TFD: Me falta ordenar y plotear las listas
