@@ -46,51 +46,50 @@ def rendimiento_helice(mach_i, alt_i):
     return np.interp(mach_i, mach, rendimientos[indice[-1][-1]])
 
 # Función Hélice
-def helice(v0, G0, v6, W56, m, h):
-    Eneto = G0 * (v6 - v0)
-    Phelice = Eneto * v0
+def helice(T0, v0, G0, m, h, c, T45t):
     rend_mec = 0,95
     rend_helice = rendimiento_helice(m, h)
-    Wprop = Phelice/ rend_helice /rend_mec
+    Phelice = T0 * v0
+    W5_45 = 1/rend_helice * Phelice
+    T5t = W5_45 / ((G0 + c) * air.cp_air(T45t)) + T45t
+    Pot_H_u = rend_mec * rend_helice * W5_45
 
-    return Wprop
+    return Phelice, T5t, Pot_H_u
 
 # Función turbina
-def turbina(T5t, G0, p5t, p0, Wprop):
+def turbina(T5t, G0, p5t, p0, T2t): # Corregido error de función (cálculo de T5t)
     # Turbina
     p45t = p5t
     T45t = T5t
-    T5_t = T45t - Wprop / G0 / air.cp_air(T5t)
+    T5_t = (T45t + T2t) * 0.5
     Tturb = 0.5 * (T5_t + T45t)
     W56 = G0 * air.cp_air(Tturb) * (T5_t - T45t)
     p5_t = ((T5_t / T5t - 1) / rend_turb(T5t) + 1) ** (air.gamma_air(Tturb) /
                                                      (air.gamma_air(Tturb) - 1)) * p45t
     p6_ = p0
-    T5_ = (p6_ / p45t) ** ((air.gamma_air(Tturb) - 1) / air.gamma_air(Tturb)) * T5_t
-    v8 = (np.sqrt(2 * air.cp_air(Tturb) * (T5t - T5_)))
 
-    return T5_, T5_t, p5_t, W56, v8
+    return T5_t, p5_t, W56
 
 # Función de las actuaciones del motor
-def actuaciones(G0, c, v8, v0):
-    #Empuje
-    E = (G0 + c) * v8 - G0 * v0
-    #Empuje neto
-    Eneto = G0 * (v8 - v0)
-    # Impulso específico total (sin aproximar la presión de salida)
-    Ie = E / G0
-    # Consumo específico total (sin aproximar la presión de salida)
-    Ce = c / E
+def actuaciones(c, v0, Phelice):
+    #Trabajo propulsivo
+    Tp = Phelice * v0
 
-    return E, Eneto, Ie, Ce,
+    # Consumo específico total (sin aproximar la presión de salida)
+    Ce = c / Phelice
+
+    return Tp, Ce,
 
 # Rendimiento motor, propulsor y motopropulsor:
-def rendimiento_TB(Eneto, c, v8, v0, G0):
+
+#TFD: Me falta definir estas variables.
+
+def rendimiento_TB(c, Pot_H_u, Tp):
     # Rendimiento motor:
-    eta_m = (Eneto * v0 + 0.5 * (G0 + c) * (v8 - v0) ** 2 - 0.5 * c * v0 ** 2) / (c * generador_gas.heating_value)
+    eta_m = Tp / (c * generador_gas.heating_value)
 
     # Rendimiento propulsor:
-    eta_p = Eneto * v0 / (Eneto * v0 + 0.5 * (G0 + c) * (v8 - v0) ** 2 - 0.5 * c * v0 ** 2)
+    eta_p = Pot_H_u / _,
 
     # Rendimiento motopropulsor:
     eta_mp = eta_m * eta_p
