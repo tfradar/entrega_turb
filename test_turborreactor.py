@@ -76,5 +76,6 @@ for h in height:
         eta_mp_lista.append(eta_mp)
 
         ii += 1
-print(Eneto_lista)
+
+print(eta_mp_lista)
 #TFD: Me falta ordenar y plotear las listas

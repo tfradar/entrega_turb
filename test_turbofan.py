@@ -76,4 +76,5 @@ for h in height:
 
         ii += 1
 
+print(eta_mp_lista)
 #TFD: Me falta ordenar y plotear las listas
